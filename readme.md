@@ -59,6 +59,11 @@ Osorio Cars es un sitio web para la gestión de servicios automotrices. Incluye 
 
 ### Configuración del proyecto
 
+1. **Clona el repositorio usando GIT:**
+   ```bash
+   git clone https://github.com/juosorioe/osoriocars-ex/
+   ```
+
 1. **Instala los requerimientos:**
    ```bash
 
