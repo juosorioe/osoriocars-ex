@@ -64,14 +64,19 @@ Osorio Cars es un sitio web para la gestión de servicios automotrices. Incluye 
    git clone https://github.com/juosorioe/osoriocars-ex/
    ```
 
-1. **Instala los requerimientos:**
+2. **ACTUALIZAR PIP :**
+   ```bash
+   python -m pip install --upgrade pip
+   ```
+
+3. **Instala los requerimientos:**
    ```bash
 
    pip install -r requirements.txt
 
    ```
 
-2. **Aplica las migraciones:**
+4. **Aplica las migraciones:**
    ```bash
 
    python manage.py makemigrations
@@ -79,7 +84,7 @@ Osorio Cars es un sitio web para la gestión de servicios automotrices. Incluye 
 
    ```
 
-3. **Ejecuta el servidor:**
+5. **Ejecuta el servidor:**
    ```bash
 
    python manage.py runserver
