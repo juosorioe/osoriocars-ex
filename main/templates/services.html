@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Nuestros Servicios</h2>
+    <div class="row" id="service-list">
+        {% for service in services %}
+        <div class="col-md-4 mb-4 service-card" data-id="{{ service.id }}">
+            <div class="card">
+                <img src="{% static service.image %}" class="card-img-top" alt="{{ service.title }}" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>{{ service.title }}</strong></h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <p class="card-text"><strong>Precio: {{ service.price }}</strong></p>
+                    <a href="{% url 'add_to_cart' service.id %}" class="btn btn-primary">Adquirir servicio</a>
+                    {% if user.is_authenticated and user.profile.role == 'mecanico' %}
+                    <button class="btn btn-danger btn-sm delete-service" data-id="{{ service.id }}">Eliminar</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if user.is_authenticated and user.profile.role == 'mecanico' %}
+    <h2 class="text-center mt-5">Agregar Nuevo Servicio</h2>
+    <form id="add-service-form" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.title.errors }}
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+        {{ form.description.errors }}
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        {{ form.price.errors }}
+        <div class="mb-3">
+            {{ form.price.label_tag }}
+            {{ form.price }}
+        </div>
+        <div class="mb-3">
+            <label for="custom_image">Imagen:</label>
+            {{ form.custom_image }}
+        </div>
+        <div>
+            <img id="image-preview" src="#" alt="Vista previa de la imagen" style="display: none; width: 200px; height: 200px; object-fit: cover;">
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Servicio</button>
+    </form>
+    {% endif %}
+</div>
+
+<script>
+    function showPreview() {
+        var select = document.getElementById('id_custom_image');
+        var preview = document.getElementById('image-preview');
+        var selectedOption = select.options[select.selectedIndex].value;
+
+        if (selectedOption) {
+            preview.src = '{% static "images/" %}' + selectedOption;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    document.getElementById('id_custom_image').addEventListener('change', showPreview);
+
+    document.getElementById('add-service-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = event.target;
+
+        fetch("{% url 'services' %}", {
+            method: "POST",
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                var serviceList = document.getElementById('service-list');
+                var newService = document.createElement('div');
+                newService.classList.add('col-md-4', 'mb-4', 'service-card');
+                newService.setAttribute('data-id', data.service.id);
+                newService.innerHTML = `
+                    <div class="card">
+                        <img src="{% static 'images/' %}${data.service.image}" class="card-img-top" alt="${data.service.title}" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>${data.service.title}</strong></h5>
+                            <p class="card-text">${data.service.description}</p>
+                            <p class="card-text"><strong>Precio: ${data.service.price}</strong></p>
+                            <a href="{% url 'add_to_cart' 0 %}".replace('0', data.service.id) class="btn btn-primary">Adquirir servicio</a>
+                            <button class="btn btn-danger btn-sm delete-service" data-id="${data.service.id}">Eliminar</button>
+                        </div>
+                    </div>`;
+                serviceList.appendChild(newService);
+                form.reset();
+                showPreview();
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-service').forEach(button => {
+        button.addEventListener('click', function() {
+            const serviceId = this.getAttribute('data-id');
+
+            fetch(`/services/delete/${serviceId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // Recargar la página después de eliminar el servicio
+                } else {
+                    alert('Error al eliminar el servicio');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+{% endblock %}

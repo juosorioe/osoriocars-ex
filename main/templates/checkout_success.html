@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Compra hecha</h2>
+    <p class="text-center">Tu compra se ha realizado con éxito. ¡Gracias por comprar con nosotros!</p>
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-primary">Volver al Inicio</a>
+    </div>
+</div>
+{% endblock %}

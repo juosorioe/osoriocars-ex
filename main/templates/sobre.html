@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Sobre Nosotros</h2>
+    <p class="lead text-center">En Osorio Cars nos especializamos en ofrecer servicios automotrices de alta calidad. Nuestro equipo de expertos está listo para ayudarte con cualquier necesidad que tengas para tu vehículo.</p>
+    <p class="text-center">Contamos con más de 25 años de experiencia en el sector, y nuestra prioridad es siempre la satisfacción de nuestros clientes.</p>
+    <p class="text-center">Ofrecemos una amplia gama de servicios, desde mantenimiento preventivo hasta reparaciones complejas. Además, utilizamos las últimas tecnologías y herramientas para asegurar que tu vehículo esté en las mejores manos.</p>
+
+    <h2 class="text-center my-4">Últimos Servicios</h2>
+    <div class="row" id="latest-service-list">
+        {% for service in latest_services %}
+        <div class="col-md-4 mb-4 service-card" data-id="{{ service.id }}">
+            <div class="card">
+                <img src="{% static service.image %}" class="card-img-top" alt="{{ service.title }}" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>{{ service.title }}</strong></h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <p class="card-text"><strong>Precio: {{ service.price }}</strong></p>
+                    <a href="{% url 'add_to_cart' service.id %}" class="btn btn-primary">Adquirir servicio</a>
+                    {% if user.is_authenticated and user.profile.role == 'mecanico' %}
+                    <button class="btn btn-danger btn-sm delete-service" data-id="{{ service.id }}">Eliminar</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

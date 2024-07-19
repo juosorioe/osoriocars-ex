@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Carrito de Compras</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Servicio</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Descuento (%)</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in carrito_items %}
+            <tr>
+                <td><img src="{% static item.servicio.image %}" alt="{{ item.servicio.title }}" style="width: 100px; height: auto;"></td>
+                <td>{{ item.servicio.title }}</td>
+                <td>{{ item.servicio.price }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>{{ item.descuento }}</td>
+                <td>{{ item.total_price }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_cart_item' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Total: {{ total_price }}</h3>
+
+    <div class="text-center">
+        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg mt-3">Proceder al Pago</a>
+    </div>
+
+    <h2 class="text-center mt-5">Agregar/Actualizar Servicio en Carrito</h2>
+    <form method="post" action="{% url 'cart' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Actualizar Carrito</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Osorio Cars{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
+
+    <h2>Usuarios</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre de Usuario</th>
+                <th>Correo Electrónico</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.profile.role }}</td>
+                <td>
+                    <a href="{% url 'edit_user' user.id %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'delete_user' user.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Códigos de Descuento</h2>
+    <a href="{% url 'add_discount_code' %}" class="btn btn-success mb-3">Crear Código de Descuento</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descuento</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for code in discount_codes %}
+            <tr>
+                <td>{{ code.code }}</td>
+                <td>{{ code.discount }}%</td>
+                <td>{{ code.is_active }}</td>
+                <td>
+                    <a href="{% url 'edit_discount_code' code.id %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'delete_discount_code' code.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Últimas Compras</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Servicio</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.user.username }}</td>
+                <td>{{ purchase.service.title }}</td>
+                <td>{{ purchase.cantidad }}</td>
+                <td>{{ purchase.total_price }}</td>
+                <td>{{ purchase.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="{% static 'js/admin_dashboard.js' %}"></script>
+{% endblock %}
