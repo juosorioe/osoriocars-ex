@@ -61,16 +61,22 @@ Osorio Cars es un sitio web para la gestión de servicios automotrices. Incluye 
 
 1. **Instala los requerimientos:**
    ```bash
+
    pip install -r requirements.txt
+
    ```
 
 2. **Aplica las migraciones:**
    ```bash
+
    python manage.py makemigrations
    python manage.py migrate
+
    ```
 
 3. **Ejecuta el servidor:**
    ```bash
+
    python manage.py runserver
+   
    ```

@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Service, Carrito, CarritoItem, DiscountCode, Purchase
+from .models import Profile, Service, Carrito, CarritoItem, DiscountCode, Purchase, ContactMessage
 from .forms import UserRegistrationForm, ProfileRegistrationForm, ProfileForm, UserForm, ServiceForm, ContactForm, CartItemForm, CarritoForm, DiscountCodeForm, EditUserForm
 from django.contrib.auth import logout
 import os
@@ -76,11 +76,25 @@ def admin_dashboard(request):
     users = User.objects.all()
     discount_codes = DiscountCode.objects.all()
     purchases = Purchase.objects.order_by('-created_at')[:5]  # Las últimas 5 compras
+    contact_messages = ContactMessage.objects.all()  # Obtener todos los mensajes de contacto
     return render(request, 'admin_dashboard.html', {
         'users': users,
         'discount_codes': discount_codes,
-        'purchases': purchases
+        'purchases': purchases,
+        'contact_messages': contact_messages
     })
+
+@user_passes_test(is_admin)
+def view_contact_message(request, message_id):
+    message = get_object_or_404(ContactMessage, id=message_id)
+    return render(request, 'view_contact_message.html', {'message': message})
+
+
+@user_passes_test(is_admin)
+def delete_contact_message(request, message_id):
+    message = get_object_or_404(ContactMessage, id=message_id)
+    message.delete()
+    return redirect('admin_dashboard')
 
 # Vista para agregar un código de descuento
 @user_passes_test(is_admin)
@@ -158,8 +172,12 @@ def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()  # Guardar el mensaje en la base de datos
+            # Save the message to the database
+            form.save()
+            messages.success(request, "Tu mensaje ha sido enviado y almacenado correctamente.")
             return redirect('contact_success')
+        else:
+            messages.error(request, "Por favor corrige los errores a continuación.")
     else:
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})

@@ -83,50 +83,33 @@
             }
         }).then(response => response.json()).then(data => {
             if (data.success) {
-                var serviceList = document.getElementById('service-list');
-                var newService = document.createElement('div');
-                newService.classList.add('col-md-4', 'mb-4', 'service-card');
-                newService.setAttribute('data-id', data.service.id);
-                newService.innerHTML = `
-                    <div class="card">
-                        <img src="{% static 'images/' %}${data.service.image}" class="card-img-top" alt="${data.service.title}" style="width: 100%; height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title"><strong>${data.service.title}</strong></h5>
-                            <p class="card-text">${data.service.description}</p>
-                            <p class="card-text"><strong>Precio: ${data.service.price}</strong></p>
-                            <a href="{% url 'add_to_cart' 0 %}".replace('0', data.service.id) class="btn btn-primary">Adquirir servicio</a>
-                            <button class="btn btn-danger btn-sm delete-service" data-id="${data.service.id}">Eliminar</button>
-                        </div>
-                    </div>`;
-                serviceList.appendChild(newService);
-                form.reset();
-                showPreview();
+                location.reload(); // Recargar la página después de agregar el servicio
             }
         });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.delete-service').forEach(button => {
-        button.addEventListener('click', function() {
-            const serviceId = this.getAttribute('data-id');
+        document.querySelectorAll('.delete-service').forEach(button => {
+            button.addEventListener('click', function() {
+                const serviceId = this.getAttribute('data-id');
 
-            fetch(`/services/delete/${serviceId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload(); // Recargar la página después de eliminar el servicio
-                } else {
-                    alert('Error al eliminar el servicio');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                fetch(`/services/delete/${serviceId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Recargar la página después de eliminar el servicio
+                    } else {
+                        alert('Error al eliminar el servicio');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
     });
-});
 </script>
 {% endblock %}

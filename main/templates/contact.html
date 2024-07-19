@@ -4,10 +4,34 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="text-center mb-4">Contacto</h2>
-    <form method="post" novalidate>
+    <form id="contact-form" method="post" novalidate>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js">//USAMOS FRAMEWORK EMAILJS</script>
+<script type="text/javascript">
+    (function(){
+        emailjs.init("O67Fy-4e_kWd3kDyB");
+    })();
+
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = event.target;
+
+        // Send email using EmailJS
+        emailjs.sendForm('service_69s3cjy', 'template_zx4rnmd', form)
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                form.submit();  // Proceed to submit the form to store the message in the database
+            }, function(error) {
+                console.log('FAILED...', error);
+                alert('Error al enviar el correo. Inténtalo de nuevo.');
+            });
+    });
+</script>
 {% endblock %}

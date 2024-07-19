@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Detalles del Mensaje de Contacto</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ message.subject }}</h5>
+            <p class="card-text"><strong>Nombre:</strong> {{ message.name }}</p>
+            <p class="card-text"><strong>Correo Electrónico:</strong> {{ message.email }}</p>
+            <p class="card-text"><strong>Mensaje:</strong> {{ message.message }}</p>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Volver al Dashboard</a>
+            <form method="post" action="{% url 'delete_contact_message' message.id %}" style="display:inline;padding:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
